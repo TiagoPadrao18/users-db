@@ -27,16 +27,30 @@ public class UserController {
 
     }
 
-    @GetMapping("/list")
+    @GetMapping
     @ResponseStatus(HttpStatus.FOUND)
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
+    @GetMapping("/{search}")
+    @ResponseStatus(HttpStatus.FOUND)
+    public List<User> findByName(@RequestParam(required = false) String name){
+        return userService.findByName(name);
+    }
+
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteUserById(@PathVariable final Long userId){
         userService.deleteUserById(userId);
     }
+
+    @PutMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public User updateUserById(@RequestBody User user, @PathVariable final Long userId){
+       return userService.updateUserById(user,userId);
+    }
+
+
 
 }
