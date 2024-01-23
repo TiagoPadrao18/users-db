@@ -28,12 +28,12 @@ public class UserController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.OK)
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
-    @GetMapping("/{search}")
-    @ResponseStatus(HttpStatus.FOUND)
+    @GetMapping(params = "name")
+    @ResponseStatus(HttpStatus.OK)
     public List<User> findByName(@RequestParam(required = false) String name){
         return userService.findByName(name);
     }
@@ -51,6 +51,11 @@ public class UserController {
        return userService.updateUserById(user,userId);
     }
 
+    @PatchMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public User updateUser(@RequestBody User user, @PathVariable final Long userId){
+        return userService.updateUserDetail(userId,user);
+    }
 
 
 }
