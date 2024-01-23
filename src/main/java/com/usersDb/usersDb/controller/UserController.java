@@ -32,6 +32,14 @@ public class UserController {
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
+
+    @GetMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public User getUserById(@PathVariable final Long userId){
+        return userService.getUserById(userId);
+    }
+
+
     @GetMapping(params = "name")
     @ResponseStatus(HttpStatus.OK)
     public List<User> findByName(@RequestParam(required = false) String name){

@@ -2,15 +2,19 @@ package com.usersDb.usersDb;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.usersDb.usersDb.exception.AlreadyExistEmailException;
+import com.usersDb.usersDb.exception.InvalidUserException;
 import com.usersDb.usersDb.exception.UserCreationException;
 import com.usersDb.usersDb.model.User;
+import com.usersDb.usersDb.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,12 +24,15 @@ public class UserServiceTest {
     @Autowired
     private MockMvc mvc;
 
+    @MockBean
+    UserRepository userRepository;
+
     @Test
     public void createUserWithNoParamTest() {
         try {
             User user = new User();
-            user.setName("adaadada");
-            user.setEmail("dadsaasdasdadsaad@gmail.com");
+            user.setName("adsa");
+            user.setEmail("aaa@gmail.com");
             user.setPassword("test123");
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -46,7 +53,7 @@ public class UserServiceTest {
         try {
             User user = new User();
             user.setName("asda");
-            user.setEmail("marcospapapadasdasdaaa.mindera.com");
+            user.setEmail("gi@mas mindera.com");
             user.setPassword("teste");
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -60,7 +67,9 @@ public class UserServiceTest {
             throw new AlreadyExistEmailException("This email already Exists");
         }
 
-
     }
+
+
+
 
 }

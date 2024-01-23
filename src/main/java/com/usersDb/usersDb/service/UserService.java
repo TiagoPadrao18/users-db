@@ -28,6 +28,10 @@ public class UserService {
         return this.userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
+    public User getUserById(final Long userId){
+        return this.userRepository.getReferenceById(userId);
+    }
+
     public void deleteUserById(final Long userId) {
         if (!userRepository.existsById(userId)) throw new InvalidUserException();
         this.userRepository.deleteById(userId);
