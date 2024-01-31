@@ -29,6 +29,7 @@ public class UserService {
     }
 
     public User getUserById(final Long userId){
+        if(!userRepository.existsById(userId)) throw new InvalidUserException();
         return this.userRepository.getReferenceById(userId);
     }
 
