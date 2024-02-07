@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class UserDoesNotExistException extends RuntimeException {
 
     public UserDoesNotExistException(){
-        super("UserId does not exist");
+        super("User not found");
     }
 }

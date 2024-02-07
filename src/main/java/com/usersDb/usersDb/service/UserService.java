@@ -1,9 +1,6 @@
 package com.usersDb.usersDb.service;
 
-import com.usersDb.usersDb.exception.AlreadyExistEmailException;
-import com.usersDb.usersDb.exception.FindByNameException;
-import com.usersDb.usersDb.exception.InvalidUserException;
-import com.usersDb.usersDb.exception.UserCreationException;
+import com.usersDb.usersDb.exception.*;
 import com.usersDb.usersDb.model.User;
 import com.usersDb.usersDb.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +15,7 @@ public class UserService {
     UserRepository userRepository;
 
     public User createUser(User user) {
-        if (user.getName().equals("") || user.getEmail().equals("") || user.getPassword().equals("")) throw new UserCreationException();
+        if (user.getName() == null || user.getEmail() == null|| user.getPassword() == null) throw new UserCreationException();
         if(this.userRepository.existsByEmail(user.getEmail())) throw new AlreadyExistEmailException("Already exist this email");
         return this.userRepository.save(user);
 
@@ -45,6 +42,9 @@ public class UserService {
     }
 
     public User updateUserById(User user, final Long userId) {
+        if(!userRepository.existsById(userId)) throw new InvalidUserException();
+        if(user.getName()==null||user.getEmail()==null||user.getPassword()==null) throw new UserUpdateWithInvalidBodyException();
+        if(this.userRepository.existsByEmail(user.getEmail())) throw new AlreadyExistEmailException("Can't change email.");
         User updatedUser = userRepository.getReferenceById(userId);
         updatedUser.setName(user.getName());
         updatedUser.setPassword(user.getPassword());
