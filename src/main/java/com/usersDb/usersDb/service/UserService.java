@@ -53,6 +53,7 @@ public class UserService {
 
 
     public User updateUserDetail(Long userId, User user) {
+        if(!userRepository.existsById(userId)) throw new InvalidUserException();
         User updatedUser = userRepository.getReferenceById(userId);
         if (user.getName() != null) {
             updatedUser.setName(user.getName());
