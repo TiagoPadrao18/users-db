@@ -2,7 +2,6 @@ package com.usersDb.usersDb.controller;
 
 import com.usersDb.usersDb.model.User;
 import com.usersDb.usersDb.service.UserService;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

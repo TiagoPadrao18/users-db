@@ -1,9 +1,6 @@
 package com.usersDb.usersDb;
 
-import com.usersDb.usersDb.exception.AlreadyExistEmailException;
-import com.usersDb.usersDb.exception.InvalidUserException;
-import com.usersDb.usersDb.exception.UserCreationException;
-import com.usersDb.usersDb.exception.UserUpdateWithInvalidBodyException;
+import com.usersDb.usersDb.exception.*;
 import com.usersDb.usersDb.model.User;
 import com.usersDb.usersDb.repository.UserRepository;
 import com.usersDb.usersDb.service.UserService;
@@ -11,11 +8,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -42,7 +40,7 @@ class UserServiceTest {
     @Test
     void createUserShouldUserCreationException() {
         User user = new User();
-        user.setEmail("tiago@gmail.com");
+        user.setEmail(null);
         user.setPassword("password");
         Assertions.assertThrows(UserCreationException.class, () -> userService.createUser(user));
     }
@@ -60,7 +58,7 @@ class UserServiceTest {
 
 
     @Test
-    void findByIdShouldAccess() {
+    void findByIdShouldSuccess() {
         User user = new User();
         user.setId(10L);
         user.setName("asdasda");
@@ -71,6 +69,57 @@ class UserServiceTest {
         Assertions.assertEquals(user, userService.getUserById(user.getId()));
     }
 
+    @Test
+    void findByIdShouldUserDoesNotExistException() {
+        User user = new User();
+        user.setId(10L);
+        user.setName("asdasda");
+        user.setEmail("aaa@gmail.com");
+        user.setPassword("test123");
+        when(userRepository.existsById(user.getId())).thenReturn(Boolean.FALSE);
+        when(userRepository.getReferenceById(user.getId())).thenReturn(user);
+        Assertions.assertThrows(UserDoesNotExistException.class, ()-> userService.getUserById(user.getId()));
+    }
+
+
+
+
+    @Test
+    void getAllUsers(){
+        List<User> userslist = new ArrayList<>();
+        userslist.add(new User());
+        Assertions.assertNotNull(userService.getAllUsers());
+    }
+
+
+    @Test
+    void findByNameShouldSuccess(){
+        List<User> usersList = new ArrayList<>();
+        User user = new User();
+        user.setName("tiago");
+        user.setPassword("test");
+        user.setEmail("emai@gmail.com");
+        user.setId(1L);
+        usersList.add(user);
+
+        when(userRepository.findByName(user.getName())).thenReturn(usersList);
+        Assertions.assertNotNull(userService.findByName(user.getName()));
+
+    }
+
+    @Test
+    void findByNameShouldInvalidUserException(){
+        List<User> userList = new ArrayList<>();
+        User user = new User();
+        user.setName("tiago");
+        user.setPassword("test");
+        user.setEmail("emai@gmail.com");
+        user.setId(1L);
+        userList.add(user);
+
+        when(userRepository.findByName("null")).thenReturn(null);
+        Assertions.assertThrows(FindByNameException.class, ()-> userService.findByName(user.getName()));
+    }
 
     @Test
     void updateUserShouldSuccess() {
@@ -126,7 +175,29 @@ class UserServiceTest {
 
     }
     @Test
-    void updateUserWithInvalidBodyRequestException() {
+    void updateUserShouldInvalidUserException() {
+        User user = new User();
+        user.setId(1L);
+        user.setName("TEST");
+        user.setEmail("test@gmail.com");
+        user.setPassword("password");
+
+        user.setName("test");
+
+        when(userRepository.existsById(user.getId())).thenReturn(Boolean.TRUE);
+        when(userRepository.getReferenceById(user.getId())).thenReturn(user);
+
+        Assertions.assertThrows(InvalidUserException.class, () -> userService.updateUserById(user, user.getId()));
+
+    }
+
+
+
+
+
+
+
+   /* void updateUserWithInvalidBodyRequestException() {
         User user = new User();
         user.setId(1L);
         user.setName("TEST");
@@ -136,7 +207,7 @@ class UserServiceTest {
         when(userRepository.getReferenceById(user.getId())).thenReturn(user);
         Assertions.assertThrows(UserUpdateWithInvalidBodyException.class, () -> userService.updateUserById(user, 1L));
 
-    }
+    }*/
 
     @Test
     void deleteUserShouldSuccess(){

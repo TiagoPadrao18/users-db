@@ -1,7 +1,4 @@
 package com.usersDb.usersDb.model;
-
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 

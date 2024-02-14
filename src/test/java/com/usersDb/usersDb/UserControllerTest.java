@@ -13,13 +13,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
-public class UserControllerTest {
+@AutoConfigureMockMvc(addFilters = false)
+class UserControllerTest {
     @Autowired
     private MockMvc mvc;
 
@@ -31,7 +34,7 @@ public class UserControllerTest {
 
 
     @Test
-    public void createUserShouldSuccess() throws Exception {
+    void createUserShouldSuccess() throws Exception {
         User user = new User();
         user.setName("asdasda");
         user.setEmail("aaa@gmail.com");
@@ -49,7 +52,7 @@ public class UserControllerTest {
 
 
     @Test
-    public void createUserWithNoParamShouldBadRequest() throws Exception{
+    void createUserWithNoParamShouldBadRequest() throws Exception {
         User user = new User();
 
 
@@ -65,7 +68,7 @@ public class UserControllerTest {
 
 
     @Test
-    public void createUserWithExistEmailShouldBadRequest() throws Exception{
+    void createUserWithExistEmailShouldBadRequest() throws Exception {
 
         User user = new User();
         user.setName("asdad");
@@ -84,9 +87,8 @@ public class UserControllerTest {
     }
 
 
-
     @Test
-    public void findUserByIdShouldSuccess() throws Exception {
+    void findUserByIdShouldSuccess() throws Exception {
         User user = new User();
         user.setId(10L);
         user.setName("asdasda");
@@ -100,9 +102,23 @@ public class UserControllerTest {
     }
 
 
+    @Test
+    void findUserByIdShouldBadRequest() throws Exception {
+        User user = new User();
+        user.setId(10L);
+        user.setName("asdasda");
+        user.setEmail("aaa@gmail.com");
+        user.setPassword("test123");
+
+        when(userRepository.existsById(user.getId())).thenReturn(Boolean.FALSE);
+
+        mvc.perform(get("/user/{userId}", user.getId()))
+                .andExpect(status().isNotFound());
+    }
+
 
     @Test
-    public void updateUserShouldSuccess() throws Exception {
+    void updateUserShouldSuccess() throws Exception {
         User user = new User();
         user.setId(1L);
         user.setName("Tiago");
@@ -118,7 +134,7 @@ public class UserControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String userObject = objectMapper.writeValueAsString(user);
 
-        mvc.perform(put("/user/{userId}",user.getId())
+        mvc.perform(put("/user/{userId}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userObject))
                 .andExpect(status().isOk());
@@ -126,7 +142,7 @@ public class UserControllerTest {
 
 
     @Test
-    public void updateUserDetailShouldSuccess() throws Exception {
+    void updateUserDetailShouldSuccess() throws Exception {
         User user = new User();
         user.setId(1L);
         user.setName("Tiago");
@@ -141,7 +157,7 @@ public class UserControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String userObject = objectMapper.writeValueAsString(user);
 
-        mvc.perform(patch("/user/{userId}",user.getId())
+        mvc.perform(patch("/user/{userId}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userObject))
                 .andExpect(status().isOk());
@@ -150,7 +166,7 @@ public class UserControllerTest {
 
 
     @Test
-    public void updateUserShouldNotFound() throws Exception {
+    void updateUserShouldNotFound() throws Exception {
         User user = new User();
         user.setId(1L);
         user.setName("Tiago");
@@ -163,7 +179,7 @@ public class UserControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String userObject = objectMapper.writeValueAsString(user);
 
-        mvc.perform(put("/user/{userId}",user.getId())
+        mvc.perform(put("/user/{userId}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userObject))
                 .andExpect(status().isBadRequest());
@@ -171,7 +187,7 @@ public class UserControllerTest {
 
 
     @Test
-    public void updateUserWithInvalidBodyRequestException() throws Exception {
+    void updateUserWithInvalidBodyRequestException() throws Exception {
         User user = Mockito.mock(User.class);
         user.setId(1L);
         user.setName("Tiago");
@@ -185,19 +201,15 @@ public class UserControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String userObject = objectMapper.writeValueAsString(user);
 
-        mvc.perform(put("/user/{userId}",user.getId())
+        mvc.perform(put("/user/{userId}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userObject))
                 .andExpect(status().isBadRequest());
     }
 
 
-
-
-
-
     @Test
-    public void deleteUserShouldSuccess() throws Exception {
+    void deleteUserShouldSuccess() throws Exception {
         User user = new User();
         user.setId(1L);
         user.setName("Tiago");
@@ -207,16 +219,14 @@ public class UserControllerTest {
 
         when(userRepository.existsById(user.getId())).thenReturn(Boolean.TRUE);
 
-        mvc.perform(delete("/user/{userId}",user.getId()))
+        mvc.perform(delete("/user/{userId}", user.getId()))
                 .andExpect(status().isOk());
 
     }
 
 
-
-
     @Test
-    public void deleteUserShouldBadRequest() throws Exception{
+    void deleteUserShouldBadRequest() throws Exception {
         User user = new User();
         user.setId(1L);
         user.setName("Tiago");
@@ -225,8 +235,19 @@ public class UserControllerTest {
 
         when(userRepository.existsById(user.getId())).thenReturn(Boolean.FALSE);
 
-        mvc.perform(delete("/user/{userId}",user.getId()))
+        mvc.perform(delete("/user/{userId}", user.getId()))
                 .andExpect(status().isBadRequest());
     }
+
+
+    @Test
+    void getAllUsersShouldSuccess() throws Exception {
+        List<User> userList = new ArrayList<>();
+        userList.add(new User());
+
+        mvc.perform(get("/user"))
+                .andExpect(status().isOk());
+    }
+
 
 }

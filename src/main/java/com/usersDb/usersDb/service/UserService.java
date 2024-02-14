@@ -14,6 +14,7 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
+
     public User createUser(User user) {
         if (user.getName() == null || user.getEmail() == null|| user.getPassword() == null) throw new UserCreationException();
         if(this.userRepository.existsByEmail(user.getEmail())) throw new AlreadyExistEmailException("Already exist this email");
@@ -26,7 +27,7 @@ public class UserService {
     }
 
     public User getUserById(final Long userId){
-        if(!userRepository.existsById(userId)) throw new InvalidUserException();
+        if(!userRepository.existsById(userId)) throw new UserDoesNotExistException();
         return this.userRepository.getReferenceById(userId);
     }
 
@@ -53,7 +54,7 @@ public class UserService {
 
 
     public User updateUserDetail(Long userId, User user) {
-        if(!userRepository.existsById(userId)) throw new InvalidUserException();
+        if(!userRepository.existsById(userId)) throw new UserDoesNotExistException();
         User updatedUser = userRepository.getReferenceById(userId);
         if (user.getName() != null) {
             updatedUser.setName(user.getName());
