@@ -184,7 +184,7 @@ class UserServiceTest {
 
         user.setName("test");
 
-        when(userRepository.existsById(user.getId())).thenReturn(Boolean.TRUE);
+        when(userRepository.existsById(user.getId())).thenReturn(Boolean.FALSE);
         when(userRepository.getReferenceById(user.getId())).thenReturn(user);
 
         Assertions.assertThrows(InvalidUserException.class, () -> userService.updateUserById(user, user.getId()));
